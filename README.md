@@ -4,7 +4,7 @@ Research package for **When Shields Miss: Testing Activation Monitors on Residua
 
 ## Current status
 
-This repository contains the registered-style study specification, literature/originality audit, and design-only protocol checks. It does **not** yet contain BashArena trajectories, trained probes, benchmark results, or a claim that the empirical effect has been demonstrated.
+This repository contains the pre-specified study protocol, literature/originality audit, and design-only protocol checks. It does **not** yet contain BashArena trajectories, trained probes, benchmark results, or a claim that the empirical effect has been demonstrated.
 
 The primary study asks whether action-span activation features identify **adapter-residual harm**: scorer-verified harmful transitions that an intended formal policy should reject, but that pass because a deliberately partial event adapter fails to recognize a pre-specified syntactic variant.
 
