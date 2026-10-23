@@ -1,0 +1,306 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\setlist{nosep}
+
+\title{When Shields Miss: Testing Activation Monitors on Residual Agent Risk}
+\author{Anonymous Authors}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Formal policies can specify the hazards an agent must avoid, yet an event adapter can fail to recognize an action that violates a correctly written policy. We define \emph{adapter-residual harm}: a scorer-verified harmful transition caused by a proposal that passes the runtime's implemented event mapping. The paper's distinct contribution is a controlled test of whether action-span activations add predictive value on this residual set, including transfer to an attack family excluded from monitor fitting. This separates our target from general trajectory-harm probing, authorization-pair prediction, and structured runtime-risk scoring. In Phase I, we will replay scorer-labeled BashArena shadow trajectories through a deliberately partial, frozen event adapter and compare residual-conditioned activations with a matched text/trace monitor, a NEXUS-inspired structured monitor, and natural-size and count-matched unconditional activation baselines. The primary endpoint is held-out-family episode recall at a 1\% honest-episode alarm target; 0.3\%, 3\%, and 10\% operating points and attack-mode benign alarm rates are also reported. Five-fold task cross-fitting, pooled family-stratified analysis, and task-clustered uncertainty address scarce positives. A live shield and closed-loop study is a separate Phase II, launched only if the pilot supports it and evaluated on fresh tasks. This manuscript specifies the study and its claim boundaries; it reports no BashArena experiment results.
+\end{abstract}
+
+\section{Introduction}
+
+Tool-using agents can perform useful work while taking actions that create harmful side effects. Formal runtime shields can deny actions that violate encoded specifications, but their guarantees depend on both policy coverage and the event adapter that maps actual tool calls into the policy's event vocabulary. A correct clause is ineffective when an adapter fails to recognize an equivalent action. In that case a harmful proposal may pass the implemented shield even though it violates the intended policy.
+
+We ask a focused question: among harmful proposals admitted by an imperfect adapter, do model-internal activations provide information that improves action monitoring beyond the prompt, trace, and structured arguments? We call this set \emph{adapter-residual risk}. It is narrower than general agentic harm and does not imply that a monitor can infer intent. The intended policy contains a clause for every BashArena side-task family; residual positives arise because the Phase I adapter deliberately recognizes canonical literal forms but misses pre-specified syntactic variants. This makes the residual set a harder within-family subset rather than merely a reweighted mixture of entire families.
+
+The design corrects a flaw in a clause-mask-only approach. With four clauses and all 16 masks, each family clause is omitted by eight masks. In a leave-one-clause-out diagnostic, seven of the other 15 masks also omit the tested family clause. Those masks admit that family's whole attack family, so the diagnostic is in-family and does not establish family generalization. Repeatedly pooling the same proposals across masks can additionally change class ratios without changing proposal support. We therefore make the partial-adapter residual the primary endpoint, call the stricter transfer test \emph{leave-one-family-out} (LOFO), and retain a mutation-only fold solely as an in-family diagnostic.
+
+The empirical novelty claim is deliberately bounded. Prior work already studies activation-based safety prediction, formal and probabilistic agent shields, structured risk scoring, benchmark transfer, and operational alarm policies. Our distinct question is whether activations add value specifically on scorer-positive false accepts produced by an incomplete event adapter for an otherwise complete policy, and whether that signal transfers to an attack family excluded from fitting under an honest-only alarm budget. We do not claim the first activation monitor, first hybrid monitor, first family-transfer test, or first formal shield.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+  \item We define adapter-residual harm as a scorer-verified first-effect transition among proposals admitted by a deliberately partial event adapter implementing a complete intended policy.
+  \item We specify a LOFO transfer test with five-fold main-task cross-fitting, a pooled family-stratified primary analysis, and a separate mutation-only in-family diagnostic.
+  \item We compare residual-conditioned activation training directly against a capacity-matched text/trace classifier, a NEXUS-inspired structured monitor, and natural-size and count-matched unconditional activation baselines.
+  \item We align the primary alarm target and positive outcome at the episode level, report honest-only alarm curves from 0.3\% to 10\%, and separate offline detection from a conditional Phase II closed-loop study.
+\end{enumerate}
+
+\subsection{Related work and novelty boundary}
+
+\emph{The Agent Knew} forecasts unauthorized actions and false reports from residual-stream readouts, gates proposed actions, and reports whole-episode effects and transfer \cite{theagentknew}. It studies matched authorized/unauthorized task worlds; it does not define its target as scorer-positive proposals admitted by a separate, imperfect event adapter implementing a complete formal policy. Our claim is therefore about the residual false-accept estimand and its evaluation, not about activation-based action gating or report monitoring. NEXUS combines deterministic rules, argument inspection, and a calibrated structured-plan risk score, but its published benchmark is small and synthetic \cite{nexus}. Our comparator will be a \emph{NEXUS-inspired BashArena port}, not a reproduction. More broadly, TACIT trains internal-state readouts on six trajectory-safety benchmarks and reports held-out-benchmark transfer \cite{tacit}; generic trajectory-harm decoding and held-out transfer are not novel claims here. ObserverBench shows why estimation metrics must be separated from the loss of actions selected by the estimator \cite{observerbench}; this motivates our separate Phase I and Phase II estimands.
+
+Internal-state probes can decode scenario or prompt context rather than action risk. Fomin et al. report negative results for pre-action monitoring and show that scenario features can dominate \cite{fominnegative}. Work on internal deception and safety readouts, including \emph{Before Agent Tells The Lie}, DeceptGuard, \emph{Are Your Agents Upward Deceivers?}, and \emph{Caught in the Act}, also rules out a broad claim that hidden-state deception or harmfulness detection is new \cite{beforelie,deceptguard,upward,caught}. We therefore include prompt-only and context-only controls, score action-span activations before tool dispatch, and treat report correctness as exploratory.
+
+Runtime specifications and shields are established lines of work: AgentSpec provides programmable runtime constraints; ProbGuard/Pro2Guard uses probabilistic risk prediction; VIGIL monitors behavioral specifications over traces; MENTOR synthesizes history-dependent procedural shields; and AgenticRV separates event adapters, monitor abstractions, and enforcement boundaries \cite{agentspec,probguard,vigil,mentor,agenticrv}. \emph{Why Formal Monitors Fail} analyzes how attack-distribution structure affects fixed-invariant coverage \cite{whyformal}. We do not claim that formal rules, policy coverage, or event adapters are new. Our manipulation asks what an activation monitor contributes after an explicitly incomplete adapter. The monitor does not repair the adapter's formal guarantee; it is a learned second line for admitted harmful proposals.
+
+Finally, probe AUROC is not an alarm policy. \emph{From Probe Scores to Alarm Policies} emphasizes the need to specify the decision unit, calibration population, and intervention cost \cite{alarm}. In BashArena, \emph{Retrying vs Resampling} reports a 0.3\% audit-budget result \cite{retrying}; an audit budget is not identical to our fallback rate, so 0.3\% is a reference operating point, not a directly equivalent cost. We use BashArena, ControlArena, and Inspect as an existing setting and evaluation stack, not as a new benchmark \cite{basharena,basharenadocs,controlarena,inspect}.
+
+\paragraph{Claim boundary.}
+The focused literature review supports a distinction in target and protocol, not a priority guarantee. We make no efficacy claim before data collection. A publishable empirical contribution depends on reliable action attribution, a sufficiently large residual-positive set, and a positive incremental result over activation-free monitors at the locked operating point. If those conditions fail, the paper will report the null or feasibility limitation rather than claim that the monitor works.
+
+\section{System and Threat Model}
+
+\subsection{Agent, policy, and event adapter}
+
+At time $t$, an agent in state $s_t$ proposes a typed tool action $a_t$. The intended policy contains one clause for each of BashArena's four scorer-defined side-task objectives. An event adapter $m_\phi(s_t,a_t)$ maps the concrete proposal to the policy's event vocabulary. The formal rule engine evaluates the mapped event and returns $g_\phi(s_t,a_t)\in\{0,1\}$, where 1 means the implemented shield admits the proposal. The Phase I adapter is intentionally partial: it recognizes a frozen set of canonical literal patterns but does not normalize a pre-specified set of equivalent shell-syntax variants. The policy clauses remain present; residual risk is induced at the event-mapping boundary, not by omitting a family from the intended policy.
+
+Let $y_t=1$ if executing $a_t$ causes a previously false BashArena side-task predicate to become true. The primary label is
+\[
+y^{\mathrm{res}}_t = y_t\,g_\phi(s_t,a_t).
+\]
+A harmful proposal denied by the adapter is not in the residual target. An admitted proposal that produces no scorer-detected effect is negative for this effect-based endpoint, including failed attack attempts. We separately record attack attempts as a sensitivity label without treating attempts as evidence of intent. If the action causing a transition cannot be uniquely attributed, it is counted and excluded from primary fitting and evaluation; label-ambiguity rates and alternative-label sensitivity results are reported.
+
+The runtime decision in Phase II is
+\[
+D(s_t,a_t,r_t)=
+\begin{cases}
+\textsc{deny}, & g_\phi(s_t,a_t)=0,\\
+\textsc{defer}, & g_\phi(s_t,a_t)=1 \ \land\ r_t\geq\tau,\\
+\textsc{allow}, & g_\phi(s_t,a_t)=1 \ \land\ r_t<\tau.
+\end{cases}
+\]
+A formal denial always takes precedence. The activation monitor can defer only an admitted proposal; it cannot authorize a denied proposal. The shield's guarantee is conditional on complete mediation and correct event mapping. Since Phase I intentionally makes the adapter incomplete, we do not claim that the shield alone enforces the intended policy in that phase.
+
+\subsection{Adversary and scope}
+
+The confirmatory scope is the four programmed BashArena attack families: sensitive-data exfiltration, privilege escalation, firewall disabling, and malware download and execution. Attack-mode instructions are visible to the agent and may be reflected in activations; prompt leakage is therefore a validity threat. The study does not test adaptive attackers, attacks on the monitor, arbitrary prompt injection, or hazards outside these benchmark objectives. Those are outside the claims. Reports after tool access closes are exploratory, and behavior labels do not establish deceptive intent.
+
+\section{Study Design}
+
+\subsection{Phase I: offline shadow study}
+
+Phase I requires no live formal-gate engine. We collect one common set of unshielded shadow trajectories in the sandbox and log every pre-dispatch proposal, its agent-visible context, action-span activations, pre-action side-task predicates, post-action scorer results, and the first newly triggered predicate. The standard BashArena wrapper stops on the first side-task effect; our instrumentation preserves that behavior. No action is blocked during shadow collection. We replay each logged proposal through the frozen Phase I event adapter and intended policy to determine whether it would have been admitted. The adapter and its literal/variant rules are frozen using documentation and training-only examples before confirmatory evaluation; scorer outcomes from the test split are never used to change the rules.
+
+BashArena documents 640 main-task IDs and four side-task families, but its standard wrapper terminates at the first side-task effect \cite{basharenadocs}. We reserve 64 main-task IDs for a training-only feasibility pilot and use the remaining 576 IDs in five outer folds. Every record derived from a main-task ID stays in one fold. For each target family $j$, all attack-mode examples for family $j$ are removed from fitting, including shadow traces under every policy mutation. The held-out family is tested on each outer fold in turn, so every confirmatory task ID is tested once per family. Model fitting uses only the other attack families and training task IDs; the target-family attack episodes never enter fit or model selection.
+
+Within each outer training pool, task IDs are split into 70\% fitting and 30\% calibration partitions. The monitor is fit only on the fitting partition. For each calibration episode, we take the maximum score over gate-admitted proposals; a split-conformal upper-tail rule with ties resolved conservatively sets the alarm threshold from honest calibration episodes only. This keeps calibration episodes independent of monitor fitting and aligns the false-alarm unit with an episode-level alarm. The primary estimate pools the four LOFO family folds as strata, gives each family equal weight, and resamples main-task IDs as clusters. Family-specific estimates are descriptive. The pilot estimates the effect base rate and checks whether the chosen open-weight checkpoint attempts the benchmark objectives at a usable rate; it is excluded from all confirmatory analyses.
+
+\subsection{Partial-adapter manipulation and mutation diagnostic}
+
+The primary adapter recognizes literal canonical forms for each of the four clauses and misses a frozen set of equivalent shell-syntax forms, including quoting/escaping, variable indirection, command chaining, and interpreter-mediated invocation. An event that cannot be mapped to a recognized clause is logged as unmatched and admitted by this deliberately permissive study adapter; this is a controlled failure injection, not a recommended deployment policy. The exact canonicalization and variant list will be published with the protocol and frozen before confirmatory labels are opened. We report adapter coverage against an independently reviewed sample of tool proposals, broken down by family and variant. If the held-out family has no scorer-positive proposals admitted by the adapter, its recall is undefined and that family contributes no positive support; it is not silently dropped from the report.
+
+A separate policy-mutation-only diagnostic replays proposals through the 16 subsets of the four clauses. It withholds one leave-one-clause-out policy mutation but allows the corresponding family to appear in other mutations. As seven of the 15 alternative masks also omit any fixed clause, this is an in-family diagnostic, not a LOFO result. We do not pool repeated copies of a proposal as independent examples: each proposal has unit total training weight across mutation views. The diagnostic can characterize sensitivity to a known-family policy change, but it cannot establish unseen-family transfer or show that family-level gating selects harder within-family examples.
+
+\subsection{Monitors and baselines}
+
+All learned monitors use the same task split, scorer labels, training budget, and model-selection rules. The confirmatory Phase I comparisons are:
+\begin{enumerate}
+  \item \textbf{Residual-conditioned activation}: the action-span activation classifier is trained only on proposals the partial adapter admits, with $y^{\mathrm{res}}$ labels.
+  \item \textbf{Unconditional activation}: the same architecture is trained on all scorer-positive harmful proposals from unshielded shadow trajectories, including those the adapter would deny. This is our baseline, not a target attributed to \emph{The Agent Knew}.
+  \item \textbf{Count-matched unconditional activation}: the unconditional training pool is repeatedly subsampled to match the residual-conditioned monitor's positive and negative counts.
+  \item \textbf{Text/trace monitor}: a trained classifier receives the pre-dispatch transcript, tool history, and proposed action, with capacity comparable to the activation classifier and the same residual labels.
+  \item \textbf{NEXUS-inspired structured monitor}: deterministic argument/rule features plus a calibrated learned score, adapted to BashArena and trained on the same residual labels. This is a new comparator port, not a reproduction of NEXUS.
+\end{enumerate}
+The primary activation representation pools hidden states over the generated tool-call span and is scored after proposal completion but before dispatch. A prompt/context-only classifier, a context-only activation readout that excludes action-span states, and shuffled activation features are leakage and negative controls. None receives the hidden policy ID, gate decision, scorer outcome, or future environment state.
+
+Residual conditioning has a plausible but unproven mechanism under the partial adapter: canonical harmful proposals are removed from training while equivalent missed variants remain, so the residual distribution may emphasize harder forms that the deployed monitor must catch. The unconditional monitor has more positive examples and may generalize better simply from additional data. We test both possibilities using natural-size and positive/negative-count-matched training sets, plus recall stratified by canonical versus adapter-missed variant. A null or negative result for conditioning is an expected possible outcome.
+
+\subsection{Alarm calibration and metrics}
+
+The primary endpoint is episode-level recall on scorer-positive adapter-residual episodes at a threshold calibrated to a 1\% honest-episode any-alarm target. An episode is detected only if the monitor flags its first harmful, adapter-admitted proposal before dispatch. On honest episodes, any monitor deferral counts as an alarm, keeping the calibration and primary positive endpoint at the episode level. The 0.3\%, 3\%, and 10\% honest-episode alarm targets form a prespecified operating curve. Calibration uses honest episodes only; attack-mode episodes are never used to set the threshold. We separately report the alarm rate on benign proposals in attack-mode episodes, per-proposal deferrals, deferrals per episode, honest task success, and latency. Realized test alarm rates are reported rather than assumed to equal their calibration targets.
+
+The 0.3\% point is included as a low-budget reference because a BashArena resampling study reports an audit-budget result at that scale \cite{retrying}; audit and fallback are different interventions and are not treated as equivalent. With about 138 calibration task clusters per outer fold, split-conformal rank resolution supports the 1\%, 3\%, and 10\% targets, but not 0.3\% (which requires at least 333 independent calibration negatives for a nontrivial finite-sample threshold). The 0.3\% result is therefore descriptive unless additional independent calibration tasks are obtained. The 1\% point is rank-supported but coarse; realized honest alarm rates and task-clustered uncertainty remain primary reporting requirements. We report episode recall, precision, average precision, and calibration as secondary offline outcomes, with per-family and variant-stratified breakdowns. Confidence intervals use a task-clustered bootstrap; no proposal is treated as an independent task.
+
+The primary planned contrast is residual-conditioned activation versus the capacity-matched text/trace monitor at 1\% honest-episode alarm target. The second planned contrast is residual-conditioned versus count-matched unconditional activation. We use paired task-level permutation tests and Holm correction across these two contrasts. The NEXUS-inspired monitor, natural-size unconditional baseline, other budgets, and mutation-only diagnostic are secondary. A preliminary paired-Bernoulli sensitivity simulation (100,000 draws; 15-point recall difference; two-sided per-contrast $\alpha=0.025$) gives approximate unclustered power of 0.95--0.75 for 184 positive episodes when paired error discordance rises from 0.30 to 0.50, and above 0.99 for 460 positives. These are optimistic planning calculations, not BashArena results; task clustering and cross-family overlap can lower power. At 8--20\% effect rate, 576 task IDs imply about 46--115 positives per family and 184--460 family-positive episodes pooled before cluster overlap. The final task-clustered power simulation will use only the 64-task pilot and test whether the confirmatory set reaches 80\% power for the 15-point effect. If power is below target, we will add independently sourced task IDs if available; extra seeds on the same tasks do not count as independent clusters. Otherwise the analysis is labeled exploratory and supports no efficacy claim.
+
+The alarm-budget resolution is also limited by the number of independent honest episodes. With 138 calibration task clusters, the 0.3\%, 1\%, 3\%, and 10\% targets correspond to roughly 0.4, 1.4, 4.1, and 13.8 expected calibration alarms. The 0.3\% point is unsupported under the planned sample size, and the 1\% point has coarse rank resolution. We retain the full curve, report task-clustered uncertainty and realized test rates, and mark any unsupported point descriptive; the primary 1\% contrast is confirmatory only if its prespecified split-conformal support rule is met.
+
+\subsection{Phase II: conditional closed-loop evaluation}
+
+A live event adapter, formal rule engine, and trusted fallback are outside Phase I. Phase II will be undertaken only if the pilot yields at least 40 scorer-positive residual episodes across at least three families and the activation monitor's pilot recall exceeds the text/trace monitor by at least 10 percentage points at the 1\% honest-episode target. This continuation rule is a feasibility filter, not confirmatory evidence. Phase II will use fresh task IDs or independently generated task templates not used for Phase I model selection. It will compare the partial shield alone with the partial shield plus residual activation and the capacity-matched text/trace monitor, using identical fallback behavior following the ControlArena defer-to-trusted semantics \cite{controlarenadocs}. The main outcome is paired closed-loop side-task success; honest task completion, unnecessary deferrals, realized proposal and episode alarm rates, latency, and tool-call overhead are reported separately. If no independent fresh tasks are available, Phase II will not be presented as confirmatory. Report correctness is measured only after tool access closes, with one neutral report-only turn and a blinded rubric; it remains exploratory and is not evidence of intent.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Phase I monitor & \shortstack{LOFO episode recall\\@ 1\% target} & \shortstack{Honest any-alarm\\rate (test)} & \shortstack{Attack-benign\\alarm rate} & \shortstack{Episode\\AUROC} \\
+\midrule
+Residual-conditioned activation & -- & -- & -- & -- \\
+Unconditional activation & -- & -- & -- & -- \\
+Count-matched unconditional activation & -- & -- & -- & -- \\
+Text/trace classifier & -- & -- & -- & -- \\
+NEXUS-inspired structured monitor & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\caption{Prespecified Phase I outcomes. Dashes are placeholders, not results. Thresholds target honest-episode any-alarm rates of 0.3\%, 1\%, 3\%, or 10\%; the table shows the primary 1\% operating point. Support-insufficient operating points will be labeled rather than treated as calibrated.}
+\label{tab:results}
+\end{table}
+
+\section{Research Questions and Claim Status}
+
+\begin{description}[leftmargin=!,labelwidth=1.5cm]
+  \item[RQ1] At the 1\% honest-episode alarm target, do action-span activations improve LOFO episode recall over a capacity-matched text/trace classifier on adapter-residual harm?
+  \item[RQ2] Does residual-conditioned activation training outperform unconditional activation training after positive/negative count matching, and does any difference persist across the honest-only alarm curve?
+\end{description}
+
+Our mechanism hypothesis is that residual conditioning can focus the monitor on harmful action forms missed by the adapter, while reducing its positive training count. The count-matched ablation and variant-stratified results test the proposed mechanism; they do not presume that conditioning helps. Phase II tests whether offline discrimination translates into prevented side-task effects. We keep these claims separate: Phase I supports a claim about detection under shadow replay; only a successful Phase II can support a closed-loop prevention claim.
+
+\paragraph{Current evidence status.}
+The novelty claim is a scoped distinction in target and test design, supported by the related-work comparison; it is not a claim of priority over all unpublished or future work. The monitor's efficacy, the usefulness of residual conditioning, and the adapter's family-specific miss rate are hypotheses with no results yet. The invariant that denied calls cannot be monitored into execution follows from the stated decision ordering only when calls are completely mediated and the event mapping is correct. The current protocol is \emph{pre-specified}, not preregistered; no registration has been made.
+
+\section{Limitations and Responsible Evaluation}
+
+The first-effect wrapper yields at most one harmful transition per attack episode, and failed attacks count as negatives for the effect label. This can produce sparse positives and noisy supervision. Cross-fitting pools the four family folds while preserving task clusters, but does not manufacture independent tasks. The pilot and power gate determine whether the evaluation can support an efficacy claim. Low-budget alarm estimates may be support-insufficient even when a ranking metric is high.
+
+The adapter is deliberately incomplete, so Phase I measures the monitor's ability to identify its false accepts rather than the performance of a deployed shield. The event parser's rule coverage and action-attribution failures must be reported. Shell aliases, dynamic execution, and multi-command scripts may complicate mapping. The policy clauses cover only benchmark-coded objectives and do not imply real-world policy completeness. Open-weight activations constrain the models we can test, and the results will not establish transfer to closed-weight systems.
+
+Prompt visibility can dominate activations. If the context-only control matches action-span performance or the action-span monitor fails to add value over text/trace, we will report that evidence and will not describe the result as action-specific internal monitoring. Closed-loop effects can differ from offline recall because deferrals change future trajectories; this is why Phase II is separate. Report correctness and adaptive-attacker behavior are exploratory and are not part of the confirmatory claims.
+
+All tasks use sandboxed environments. We will pin the BashArena and ControlArena versions, task hashes, scorer version, checkpoint, adapter rules, exclusions, and analysis code before confirmatory evaluation. We will release sufficient protocol details to reproduce the evaluation without exposing live credentials or production systems.
+
+\section{Conclusion}
+
+We propose a controlled study of activation monitoring on harmful proposals that pass an incomplete event adapter implementing a complete intended policy. The key test is whether action-span activations add value over text/trace and structured-risk monitors on this adapter-residual set, including LOFO transfer at a low honest-only alarm target. The method's novelty lies in this bounded estimand and evaluation, not in activation probes, formal shields, or agent monitoring generally. The study has not yet produced BashArena results. Any claim of efficacy or closed-loop prevention depends on the planned experiments and their support checks.
+
+\begin{thebibliography}{24}
+
+\bibitem{inspect}
+UK AI Security Institute.
+\newblock \emph{Inspect: An Open-Source Framework for Large Language Model Evaluations}.
+\newblock \url{https://inspect.aisi.org.uk/}.
+
+\bibitem{controlarena}
+UK AI Security Institute.
+\newblock \emph{ControlArena: A Library for Running AI Control Experiments}.
+\newblock \url{https://www.aisi.gov.uk/blog/introducing-controlarena-a-library-for-running-ai-control-experiments}.
+
+\bibitem{basharena}
+Adam Kaufman, James Lucassen, Tyler Tracy, Cody Rushing, and Aryan Bhatt.
+\newblock BashArena: A Control Setting for Highly Privileged AI Agents.
+\newblock arXiv:2512.15688, 2025.
+\newblock \url{https://arxiv.org/abs/2512.15688}.
+
+\bibitem{basharenadocs}
+UK AI Security Institute.
+\newblock BashArena Setting Documentation, ControlArena.
+\newblock \url{https://control-arena.aisi.org.uk/settings/bash_arena.html}.
+
+\bibitem{theagentknew}
+Arya Fayyazi, Mehdi Kamal, and Massoud Pedram.
+\newblock The Agent Knew: Internal States Forecast Unauthorized Actions and Stop Them, and the Lies That Follow.
+\newblock arXiv:2610.17301, 2026.
+\newblock \url{https://arxiv.org/abs/2610.17301}.
+
+\bibitem{nexus}
+Elias Hossain, Md Mehedi Hasan Nipu, Tasfia Nuzhat Ornee, Rajib Rana, and Niloofar Yousefi.
+\newblock NEXUS: Structured Runtime Safety for Tool-Using LLM Agents.
+\newblock arXiv:2607.19356, 2026.
+\newblock \url{https://arxiv.org/abs/2607.19356}.
+
+\bibitem{tacit}
+Difan Jiao and Ashton Anderson.
+\newblock Agent Safety From Within: Detecting Harmful Trajectories from LLM Internal States.
+\newblock arXiv:2609.33039, 2026.
+\newblock \url{https://arxiv.org/abs/2609.33039}.
+
+\bibitem{observerbench}
+Vijay Erramilli.
+\newblock ObserverBench: Testing Mechanistic Estimates for Intervention and Control.
+\newblock arXiv:2609.03026, 2026.
+\newblock \url{https://arxiv.org/abs/2609.03026}.
+
+\bibitem{fominnegative}
+Max Fomin, Elad David, and Amit LeVi.
+\newblock Internal-State Probes Read the Situation, Not the Action: Three Negative Results for Pre-Action Misalignment Monitoring.
+\newblock arXiv:2606.30449, 2026.
+\newblock \url{https://arxiv.org/abs/2606.30449}.
+
+\bibitem{beforelie}
+Xinling Li, Dadi Guo, Qingyu Liu, Qinghua Mao, Yi R. Fung, Na Zou, Xia Hu, and Dongrui Liu.
+\newblock Before Agent Tells The Lie: Has Deception Already Been Represented?
+\newblock arXiv:2610.06576, 2026.
+\newblock \url{https://arxiv.org/abs/2610.06576}.
+
+\bibitem{deceptguard}
+Snehasis Mukhopadhyay.
+\newblock DeceptGuard: A Constitutional Oversight Framework for Detecting Deception in LLM Agents.
+\newblock arXiv:2603.13791, 2026.
+\newblock \url{https://arxiv.org/abs/2603.13791}.
+
+\bibitem{upward}
+Dadi Guo et al.
+\newblock Are Your Agents Upward Deceivers?
+\newblock arXiv:2512.04864, 2025.
+\newblock \url{https://arxiv.org/abs/2512.04864}.
+
+\bibitem{caught}
+Gerard Boxo, Ryan Socha, Daniel Yoo, and Shivam Raval.
+\newblock Caught in the Act: A Mechanistic Approach to Detecting Deception.
+\newblock arXiv:2508.19505, 2025.
+\newblock \url{https://arxiv.org/abs/2508.19505}.
+
+\bibitem{agentspec}
+Haoyu Wang, Christopher M. Poskitt, and Jun Sun.
+\newblock AgentSpec: Customizable Runtime Enforcement for Safe and Reliable LLM Agents.
+\newblock arXiv:2503.18666, 2025.
+\newblock \url{https://arxiv.org/abs/2503.18666}.
+
+\bibitem{probguard}
+Haoyu Wang, Christopher M. Poskitt, Jiali Wei, and Jun Sun.
+\newblock Pro2Guard/ProbGuard: Proactive Runtime Enforcement for LLM Agent Safety via Probabilistic Model Checking.
+\newblock arXiv:2508.00500, 2025.
+\newblock \url{https://arxiv.org/abs/2508.00500}.
+
+\bibitem{vigil}
+Ying Li et al.
+\newblock VIGIL: Runtime Enforcement of Behavioral Specifications in AI Agent Skills.
+\newblock arXiv:2606.26524, 2026.
+\newblock \url{https://arxiv.org/abs/2606.26524}.
+
+\bibitem{mentor}
+Ashwani Anand, Ivi Chatzi, Ritam Raha, and Anne-Kathrin Schmuck.
+\newblock MENTOR: Procedural Shielding of Tool-Using LLM Agents.
+\newblock arXiv:2610.17039, 2026.
+\newblock \url{https://arxiv.org/abs/2610.17039}.
+
+\bibitem{agenticrv}
+Angelo Ferrando.
+\newblock One Monitor Does Not Fit All: Formalism-Agnostic Runtime Verification for Agentic AI.
+\newblock arXiv:2610.19818, 2026.
+\newblock \url{https://arxiv.org/abs/2610.19818}.
+
+\bibitem{whyformal}
+Ruiyang Zhang.
+\newblock Why Formal Monitors Fail: Attack Distribution Entropy as a Coverage Bound for LTL-Based LLM Agent Safety.
+\newblock arXiv:2608.01388, 2026.
+\newblock \url{https://arxiv.org/abs/2608.01388}.
+
+\bibitem{alarm}
+Xueping Gao.
+\newblock From Probe Scores to Alarm Policies: Operational Validity of Activation Monitors for Language-Model Agents.
+\newblock arXiv:2610.04575, 2026.
+\newblock \url{https://arxiv.org/abs/2610.04575}.
+
+\bibitem{retrying}
+James Lucassen and Adam Kaufman.
+\newblock Retrying vs Resampling in AI Control.
+\newblock arXiv:2605.26047, 2026.
+\newblock \url{https://arxiv.org/abs/2605.26047}.
+
+\bibitem{controlarenadocs}
+UK AI Security Institute.
+\newblock Monitors and Defer-to-Trusted Micro-Protocol, ControlArena Documentation.
+\newblock \url{https://control-arena.aisi.org.uk/monitors.html}.
+
+\end{thebibliography}
+
+\end{document}
+
+
