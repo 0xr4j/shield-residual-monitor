@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Model and experiment artifacts
+models/
+checkpoints/
+wandb/
+mlruns/
+outputs/
+runs/
+artifacts/
+cache/
+hf-cache/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.npy
+*.npz
+*.parquet
+*.arrow
+*.feather
+
+# TeX build output
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.log
+*.out
+*.pdf
+*.synctex.gz
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
