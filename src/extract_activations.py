@@ -50,7 +50,7 @@ def main():
 
     try:
         import torch
-        from transformers import AutoModelForCausalLM, AutoTokenizer
+        from transformers import AutoModelForMultimodalLM, AutoTokenizer
     except ImportError as exc:
         raise SystemExit("Install requirements-gpu.txt before extracting activations") from exc
 
@@ -67,7 +67,7 @@ def main():
     if args.load_in_4bit:
         from transformers import BitsAndBytesConfig
         model_kwargs["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True)
-    model = AutoModelForCausalLM.from_pretrained(args.model, **model_kwargs)
+    model = AutoModelForMultimodalLM.from_pretrained(args.model, **model_kwargs)
     model.eval()
     device = next(model.parameters()).device
 
