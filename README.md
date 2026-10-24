@@ -4,7 +4,7 @@
 
 **Research status:** protocol and design checks only · **Empirical results:** none
 
-> This repository does not contain BashArena trajectories, trained monitors, or empirical benchmark results. All current numbers are calculations or planning simulations and are labeled as such. Do not cite them as model performance.
+> **Evidence status:** This repository contains no BashArena trajectories, fitted monitors, or empirical benchmark results. Reported values are design calculations or planning simulations; they do not measure model performance.
 
 **Project site:** [Open the interactive study overview](https://0xr4j.github.io/shield-residual-monitor/) · **Reproduction:** [run the design checks](docs/reproduction.md) · **Evidence limits:** [claim audit](docs/claim-audit.md)
 
@@ -34,7 +34,7 @@ flowchart LR
 | Exact design enumeration | Clause-mask overlap counts | Family generalization or model behavior |
 | Synthetic software fixture | Eight hand-authored literal/obfuscated toy proposals | BashArena task coverage or real adapter miss rates |
 | Planning simulation | Paired-Bernoulli power sensitivity under explicit assumptions | Confirmatory power after task clustering |
-| Finite-sample arithmetic | Calibration rank resolution if each of 138 planned task clusters contributes one exchangeable honest unit | Realized test alarm rates or calibrated model performance |
+| Finite-sample arithmetic | Calibration rank resolution under the assumption that each of 138 planned task clusters contributes one exchangeable honest unit | Realized test alarm rates or calibrated model performance |
 | Empirical benchmark data | **None supplied** | Any efficacy, prevention, or transfer claim |
 
 The generated [design-audit table](results/design_audit.csv) keeps the numbers and their evidence labels together. See the [claim audit](docs/claim-audit.md) for the assumptions and open issues.
@@ -69,7 +69,7 @@ python src/design_audit.py
 
 ```text
 configs/       planning-only pilot configuration
-data/          private artifact policy; no benchmark dataset is committed
+data/          artifact access and retention guidance; no benchmark dataset is committed
 docs/          claim audit, implementation plan, and experiment-log template
 manifests/     schema guidance for immutable run and split manifests
 paper/         pre-specified study manuscript (LaTeX source)
@@ -78,7 +78,7 @@ src/           reproducible design audit and planning calculations
 tests/         unit tests plus clearly labeled synthetic toy fixture
 ```
 
-The [claim audit](docs/claim-audit.md) states what each number supports, and the [reproduction guide](docs/reproduction.md) lists the checked commands. GitHub Actions reruns the unit tests and checks that the generated CSV is current; a green check is software validation only.
+The [claim audit](docs/claim-audit.md) states what each number supports, and the [reproduction guide](docs/reproduction.md) lists the checked commands. GitHub Actions runs the unit tests and checks that the generated CSV is current. These checks validate the software and report generation; they do not evaluate monitor efficacy.
 
 ## Study phases and stop rules
 
@@ -94,6 +94,6 @@ Raw trajectories, scorer details, activations, model caches, checkpoints, and cr
 
 ## Citation and claim boundary
 
-The manuscript is a **pre-specified protocol**, not a preregistration and not a completed study. Its results table intentionally contains placeholders. Do not claim that residual conditioning improves detection, that the monitor prevents harm, or that it generalizes until the planned evaluation has run and its support checks pass. Literature novelty is scoped and is not a priority guarantee; see [`docs/originality-audit.md`](docs/originality-audit.md).
+The manuscript is a **pre-specified protocol**, not a preregistration or a completed study. Its results table contains placeholders. Claims about improved detection, harm prevention, or generalization require results from the planned evaluation and successful support checks. The literature review scopes the novelty claim but does not establish priority; see [`docs/originality-audit.md`](docs/originality-audit.md).
 
 No open-source license is attached. Public repository access does not grant reuse or redistribution rights; copyright remains with the authors unless a license is added.
