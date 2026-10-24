@@ -6,6 +6,8 @@
 
 > This repository does not contain BashArena trajectories, trained monitors, or empirical benchmark results. All current numbers are calculations or planning simulations and are labeled as such. Do not cite them as model performance.
 
+**Project site:** [Open the interactive study overview](https://0xr4j.github.io/shield-residual-monitor/) · **Reproduction:** [run the design checks](docs/reproduction.md) · **Evidence limits:** [claim audit](docs/claim-audit.md)
+
 ## The research question
 
 Can action-span activations identify harmful tool proposals that pass a deliberately incomplete event adapter, beyond what transcript, tool-history, and structured-argument monitors can identify?
