@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive, safe simulation of policy and event-adapter blind spots for tool-using agents.">
+  <title>ResidualLab — Agent Safety Workbench</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="mark">R</span><div><strong>ResidualLab</strong><small>Agent Safety Workbench</small></div></div>
+    <span class="badge">SAFE SIMULATION · NO TOOLS EXECUTED</span>
+  </header>
+  <main>
+    <section class="intro">
+      <p class="eyebrow">PAPER PROTOTYPE · ADAPTER-RESIDUAL RISK</p>
+      <h1>When the policy is right<br>but the action still gets through.</h1>
+      <p class="lede">Explore how a deliberately incomplete event adapter can miss a harmful tool action even when the intended policy contains the right rule.</p>
+    </section>
+    <section class="workspace">
+      <aside class="panel scenarios">
+        <div class="panel-title"><span>01</span><h2>Choose a scenario</h2></div>
+        <div id="scenario-list" class="scenario-list"></div>
+        <div class="note"><strong>What is simulated?</strong><p>Tool calls and side effects are represented as labels only. Nothing is sent to a shell, agent, or external system.</p></div>
+      </aside>
+      <section class="panel result">
+        <div class="panel-title"><span>02</span><h2>Trace the decision</h2></div>
+        <div id="scenario-detail"></div>
+        <button id="run-button" class="primary">Run safe simulation <span>→</span></button>
+        <div id="decision" class="decision empty">Choose a scenario and run it to see the policy, adapter, and outcome.</div>
+        <div class="monitor-card">
+          <div><span class="eyebrow">ACTIVATION MONITOR</span><strong>Research integration pending</strong></div>
+          <p>No activation score is fabricated here. A trained probe and validated action-span activations are required before this panel can report a real score.</p>
+        </div>
+      </section>
+      <aside class="panel muse">
+        <div class="panel-title"><span>03</span><h2>Ask Muse Spark</h2></div>
+        <p class="muted">Get a plain-language explanation and a safe regression-test idea for the selected simulated mismatch.</p>
+        <button id="explain-button" class="secondary">Explain with Muse Spark</button>
+        <div id="explanation" class="explanation">Muse Spark’s response will appear here. Configure <code>MODEL_API_KEY</code> to enable the API call.</div>
+        <div class="privacy">Only the selected scenario’s synthetic label and abstract action description are sent to Meta Model API. No credentials or benchmark traces are sent.</div>
+      </aside>
+    </section>
+    <footer><span>Research prototype for <em>When Shields Miss</em></span><a href="https://github.com/0xr4j/shield-residual-monitor">Paper and protocol</a></footer>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
