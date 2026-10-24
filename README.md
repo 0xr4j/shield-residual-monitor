@@ -2,7 +2,7 @@
 
 ### *When Shields Miss: Testing Activation Monitors on Residual Agent Risk*
 
-**Research status:** protocol and design checks only · **Empirical results:** none · **Repository:** private
+**Research status:** protocol and design checks only · **Empirical results:** none
 
 > This repository does not contain BashArena trajectories, trained monitors, or empirical benchmark results. All current numbers are calculations or planning simulations and are labeled as such. Do not cite them as model performance.
 
@@ -88,10 +88,10 @@ The adapter is intentionally incomplete for Phase I. Its false accepts are the s
 
 ## Data, privacy, and release
 
-The repository is currently private. Raw trajectories, scorer details, activations, model caches, checkpoints, and credentials stay out of Git. `tests/fixtures/toy_adapter_cases.json` is synthetic test data only. Before publishing benchmark artifacts, verify the benchmark license, institutional requirements, consent/retention rules, and whether manifests reveal hidden task details. Read [`data/README.md`](data/README.md).
+Raw trajectories, scorer details, activations, model caches, checkpoints, and credentials stay out of Git regardless of repository visibility. `tests/fixtures/toy_adapter_cases.json` is synthetic test data only. Before publishing benchmark artifacts, verify the benchmark license, institutional requirements, consent/retention rules, and whether manifests reveal hidden task details. Read [`data/README.md`](data/README.md).
 
 ## Citation and claim boundary
 
 The manuscript is a **pre-specified protocol**, not a preregistration and not a completed study. Its results table intentionally contains placeholders. Do not claim that residual conditioning improves detection, that the monitor prevents harm, or that it generalizes until the planned evaluation has run and its support checks pass. Literature novelty is scoped and is not a priority guarantee; see [`docs/originality-audit.md`](docs/originality-audit.md).
 
-No open-source license is attached while the project remains unpublished and private. Copyright remains with the authors.
+No open-source license is attached. Public repository access does not grant reuse or redistribution rights; copyright remains with the authors unless a license is added.

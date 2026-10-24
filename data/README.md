@@ -30,4 +30,4 @@ Commit only small, reviewable artifacts:
 - a data card and licensing notes
 - immutable external artifact version IDs and checksums
 
-Before public release, verify the BashArena/ControlArena license and remove anything that can expose hidden task details or prohibited benchmark data.
+Before committing or distributing benchmark-derived artifacts, verify the BashArena/ControlArena license and remove anything that can expose hidden task details or prohibited benchmark data. Repository visibility is not a substitute for this review.
