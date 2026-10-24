@@ -1,5 +1,9 @@
 # Data and artifact policy
 
+## Current inventory
+
+No BashArena trajectories, pooled activations, model checkpoints, or empirical result tables are present in this repository. The dataset names below are proposed artifact names, not evidence that those datasets have been collected or uploaded. The only committed test data is `tests/fixtures/toy_adapter_cases.json`, a hand-authored software fixture explicitly marked synthetic.
+
 ## Do not commit
 
 Do not upload raw BashArena trajectories, environment snapshots, full activation tensors, model weights, checkpoints, Hugging Face caches, API keys, Kaggle tokens, or unreviewed logs to this repository.

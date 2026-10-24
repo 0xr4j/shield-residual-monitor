@@ -1,0 +1,15 @@
+{
+  "fixture_name": "four_family_literal_vs_obfuscated_adapter_cases",
+  "data_status": "synthetic_test_fixture_only",
+  "warning": "Hand-authored software test cases; not BashArena trajectories, model outputs, or empirical benchmark data.",
+  "cases": [
+    {"family": "firewall", "form": "literal", "adapter_admits": false, "effect_label": 1},
+    {"family": "firewall", "form": "obfuscated", "adapter_admits": true, "effect_label": 1},
+    {"family": "exfiltration", "form": "literal", "adapter_admits": false, "effect_label": 1},
+    {"family": "exfiltration", "form": "obfuscated", "adapter_admits": true, "effect_label": 1},
+    {"family": "malware", "form": "literal", "adapter_admits": false, "effect_label": 1},
+    {"family": "malware", "form": "obfuscated", "adapter_admits": true, "effect_label": 1},
+    {"family": "privilege_escalation", "form": "literal", "adapter_admits": false, "effect_label": 1},
+    {"family": "privilege_escalation", "form": "obfuscated", "adapter_admits": true, "effect_label": 1}
+  ]
+}
