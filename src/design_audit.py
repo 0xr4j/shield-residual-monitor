@@ -153,7 +153,7 @@ def write_design_audit(path="results/design_audit.csv"):
     output.parent.mkdir(parents=True, exist_ok=True)
     rows = design_audit_rows()
     with output.open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     return output
